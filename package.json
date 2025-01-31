@@ -8,8 +8,12 @@
     "preview": "rsbuild preview"
   },
   "dependencies": {
+    "@tailwindcss/postcss": "^4.0.1",
+    "postcss": "^8.5.1",
+    "postcss-loader": "^8.1.1",
     "react": "^19.0.0",
-    "react-dom": "^19.0.0"
+    "react-dom": "^19.0.0",
+    "tailwindcss": "^4.0.1"
   },
   "devDependencies": {
     "@rsbuild/core": "^1.1.8",
