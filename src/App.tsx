@@ -1,10 +1,10 @@
 import "./index.css";
+import Uploader from "./Uploader";
 
 const App = () => {
   return (
-    <div className="text-red-500">
-      <h1>Rsbuild with React</h1>
-      <p>Start building amazing things with Rsbuild.</p>
+    <div className="p-4">
+      <Uploader />
     </div>
   );
 };
