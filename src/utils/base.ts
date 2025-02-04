@@ -1,4 +1,5 @@
-import type { Track } from "@/class/Track";
+import type { Track, TrackLineItem } from "@/class/Track";
+import { VideoTrack } from "@/class/VideoTrack";
 declare class ImageDecoder {
   constructor(init: { type: string; data: ReadableStream<Uint8Array> });
   completed: Promise<void>;
@@ -47,6 +48,7 @@ export async function decodeImg(
   }
   return rs;
 }
+
 export function checkTrackListOverlap(
   trackList: Track[],
   checkItem: Track,
@@ -82,3 +84,71 @@ export function checkTrackListOverlap(
     insertIndex,
   };
 }
+
+export function formatPlayerTime(frameCount: number) {
+  let f = Math.round(frameCount % 30);
+  frameCount = Math.floor(frameCount / 30);
+  let s = frameCount % 60;
+  frameCount = Math.floor(frameCount / 60);
+  let m = frameCount % 60;
+  frameCount = Math.floor(frameCount / 60);
+  let h = frameCount;
+  return `${h < 10 ? "0" : ""}${h}:${m < 10 ? "0" : ""}${m}:${
+    s < 10 ? "0" : ""
+  }${s}:${f < 10 ? "0" : ""}${f}`;
+}
+
+/**
+ * 精确计时器
+ * @param callback
+ * @param interval
+ * @returns
+ */
+export function preciseInterval(callback: () => void, interval: number) {
+  let expected = performance.now() + interval;
+  let stop = false;
+
+  function step(timestamp: number) {
+    if (stop) return;
+
+    if (timestamp >= expected) {
+      callback();
+      // 累积期望的时间，以保持精确的间隔
+      expected += interval;
+    }
+
+    requestAnimationFrame(step);
+  }
+
+  requestAnimationFrame(step);
+
+  // 返回一个对象包含取消方法
+  return {
+    cancel: () => {
+      stop = true;
+    },
+  };
+}
+
+export function isOfCanPlayType(value: unknown): value is VideoTrack {
+  return value instanceof VideoTrack;
+}
+
+type TypeGuard<T> = (value: unknown) => value is T;
+
+export const getCurrentTrackItemList = <T>(
+  trackList: TrackLineItem[],
+  currentFrame: number,
+  isOfType: TypeGuard<T>
+): T[] => {
+  const trackItems: T[] = [];
+  trackList.forEach(({ list }) => {
+    list.forEach((trackItem) => {
+      const { start, end } = trackItem;
+      if (start <= currentFrame && end >= currentFrame && isOfType(trackItem)) {
+        trackItems.push(trackItem);
+      }
+    });
+  });
+  return trackItems;
+};

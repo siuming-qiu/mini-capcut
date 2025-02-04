@@ -1,9 +1,10 @@
 import { FileText, ImageUp, Music, Video } from "lucide-react";
 import { selectFile } from "./utils/file";
 import { getMD5 } from "./class/Base";
-import { imageDecoder } from "./utils/webcodesc";
+import { imageDecoder, videoDecoder } from "./utils/webcodesc";
 import { ImageSource, ImageTrack } from "./class/ImageTrack";
 import { usePlayerStore, useTrackStore } from "./hooks";
+import { VideoTrack } from "./class/VideoTrack";
 
 export default function Uploader() {
   const { playerConfig, playStartFrame } = usePlayerStore();
@@ -66,6 +67,45 @@ export default function Uploader() {
     // const url = await uploadFile(files[0]);
     addTrack(imageTrack);
   };
+  const handleUploadVideo = async () => {
+    const files = await selectFile({
+      accept: "video/*",
+      multiple: true,
+    });
+    const id = await getMD5(await files[0].arrayBuffer());
+
+    const clip = await videoDecoder.decode({
+      id,
+      stream: files[0].stream(),
+      type: files[0].type,
+    });
+
+    if (!clip) {
+      // 提示解析视频失败
+      console.error("解析视频失败");
+      return;
+    }
+
+    const videoTrack = new VideoTrack(
+      {
+        id,
+        url: URL.createObjectURL(files[0]),
+        name: files[0].name,
+        format: files[0].type,
+        width: clip.meta.width,
+        height: clip.meta.height,
+        duration: Math.round(clip.meta.duration / 1e6),
+      },
+      playStartFrame
+    );
+
+    videoTrack.resize({
+      width: playerConfig.playerWidth,
+      height: playerConfig.playerHeight,
+    });
+
+    addTrack(videoTrack);
+  };
   return (
     <div className="flex flex-col gap-4 w-16">
       {/* {uploadList.map((item) => (
@@ -76,7 +116,7 @@ export default function Uploader() {
           <div className="text-sm">{item.name}</div>
         </div>
       ))} */}
-      <div onClick={handleUpload}>上传图片</div>
+      <div onClick={handleUploadVideo}>上传图片</div>
     </div>
   );
 }

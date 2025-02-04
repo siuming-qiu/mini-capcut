@@ -13,10 +13,16 @@ interface PlayerState {
     playerWidth: number;
     playerHeight: number;
   };
-  exiistVideo: boolean;
+  existVideo: boolean;
   playStartFrame: number;
 
   isPause: boolean;
+  setPlayStartFrame: (frame: number) => void;
+  setIsPause: (pause: boolean) => void;
+  setPlayerConfig: (config: PlayerState["playerConfig"]) => void;
+  setCanvasOptions: (options: PlayerState["canvasOptions"]) => void;
+  setExistVideo: (exist: PlayerState["existVideo"]) => void;
+  addPlayStartFrame: () => void;
 }
 
 export const usePlayerStore = create<PlayerState>((set) => ({
@@ -30,18 +36,20 @@ export const usePlayerStore = create<PlayerState>((set) => ({
     playerWidth: 1080 / 6,
     playerHeight: 1920 / 6,
   },
-  exiistVideo: false,
+  existVideo: false,
   playStartFrame: 0,
-  isPause: false,
+  isPause: true,
   setPlayerConfig: (config: PlayerState["playerConfig"]) =>
     set({ playerConfig: config }),
   setCanvasOptions: (options: PlayerState["canvasOptions"]) =>
     set({ canvasOptions: options }),
-  setExiistVideo: (exist: PlayerState["exiistVideo"]) =>
-    set({ exiistVideo: exist }),
+  setExistVideo: (exist: PlayerState["existVideo"]) =>
+    set({ existVideo: exist }),
   setPlayStartFrame: (frame: PlayerState["playStartFrame"]) =>
     set({ playStartFrame: frame }),
   setIsPause: (pause: PlayerState["isPause"]) => set({ isPause: pause }),
+  addPlayStartFrame: () =>
+    set((state) => ({ playStartFrame: state.playStartFrame + 1 })),
 }));
 
 interface TrackState {
