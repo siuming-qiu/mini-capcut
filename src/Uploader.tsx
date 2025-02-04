@@ -2,8 +2,12 @@ import { FileText, ImageUp, Music, Video } from "lucide-react";
 import { selectFile } from "./utils/file";
 import { getMD5 } from "./class/Base";
 import { imageDecoder } from "./utils/webcodesc";
+import { ImageSource, ImageTrack } from "./class/ImageTrack";
+import { usePlayerStore, useTrackStore } from "./hooks";
 
 export default function Uploader() {
+  const { playerConfig, playStartFrame } = usePlayerStore();
+  const { addTrack } = useTrackStore();
   const uploadList = [
     {
       name: "图片",
@@ -38,7 +42,29 @@ export default function Uploader() {
       stream: file.stream(),
       type: file.type,
     });
-    console.log(frames);
+    if (!frames) {
+      // 提示解析视频失败
+      console.error("解析图片失败");
+      return;
+    }
+
+    // 获取文件相关信息
+    const imageSource: ImageSource = {
+      id,
+      url: id,
+      name: files[0].name,
+      format: files[0].type,
+      width: frames[0].codedWidth,
+      height: frames[0].codedHeight,
+    };
+    const imageTrack = new ImageTrack(imageSource, playStartFrame);
+    imageTrack.resize({
+      width: playerConfig.playerWidth,
+      height: playerConfig.playerHeight,
+    });
+
+    // const url = await uploadFile(files[0]);
+    addTrack(imageTrack);
   };
   return (
     <div className="flex flex-col gap-4 w-16">
