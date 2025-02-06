@@ -2,6 +2,7 @@ import "./index.css";
 import CanvasPlayer from "./CanvasPlayer";
 import PlayerControl from "./PlayerControl";
 import Uploader from "./Uploader";
+import TimeLine from "./components/Timeline";
 
 const App = () => {
   return (
@@ -9,6 +10,7 @@ const App = () => {
       <Uploader />
       <CanvasPlayer />
       <PlayerControl />
+      <TimeLine />
     </div>
   );
 };

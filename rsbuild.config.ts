@@ -8,4 +8,7 @@ export default defineConfig({
       "@": "./src",
     },
   },
+  html: {
+    title: "视频编辑器",
+  },
 });

@@ -5,8 +5,8 @@ import {
   getCurrentTrackItemList,
   isOfCanPlayType,
   preciseInterval,
-} from "./utils/base";
-import { useFrameCount, usePlayerStore, useTrackStore } from "./hooks";
+} from "@/utils/base";
+import { useFrameCount, usePlayerStore, useTrackStore } from "@/hooks";
 
 interface PlayerControlProps {
   disable?: boolean;

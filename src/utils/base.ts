@@ -1,5 +1,12 @@
 import type { Track, TrackLineItem } from "@/class/Track";
 import { VideoTrack } from "@/class/VideoTrack";
+import { type ClassValue, clsx } from "clsx";
+import { twMerge } from "tailwind-merge";
+
+export function cn(...inputs: ClassValue[]) {
+  return twMerge(clsx(inputs));
+}
+
 declare class ImageDecoder {
   constructor(init: { type: string; data: ReadableStream<Uint8Array> });
   completed: Promise<void>;
@@ -152,3 +159,22 @@ export const getCurrentTrackItemList = <T>(
   });
   return trackItems;
 };
+/**
+ *  时间格式化
+ * */
+export function formatTime(time: number) {
+  let second = Math.ceil(time / 1000);
+  const s = second % 60;
+  second = Math.floor(second / 60);
+  const m = second % 60;
+  second = Math.floor(second / 60);
+  const h = second % 60;
+  return {
+    s,
+    m,
+    h,
+    str: `${h === 0 ? "" : `${h < 10 ? "0" : ""}${h}:`}${
+      m < 10 ? "0" : ""
+    }${m}:${s < 10 ? "0" : ""}${s}`,
+  };
+}
